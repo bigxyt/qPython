@@ -24,14 +24,14 @@ ctypedef numpy.uint8_t DTYPE8_t
 
 
 
-def uncompress(numpy.ndarray[DTYPE8_t] data, DTYPE_t uncompressed_size):
-    cdef DTYPE_t n, r, i, d, s, p, pp, f
+def uncompress(const DTYPE8_t[:] data, DTYPE_t uncompressed_size):
+    cdef DTYPE_t n, r, i, d, s, p, pp, f, j
     n, r, s, p, pp = 0, 0, 0, 0, 0
     i, d = 1, 1
 
-    cdef numpy.ndarray[DTYPE_t] ptrs = numpy.zeros(256, dtype = DTYPE)
-    cdef numpy.ndarray[DTYPE8_t] uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
-    cdef numpy.ndarray[DTYPE_t] idx = numpy.arange(uncompressed_size, dtype = DTYPE)
+    cdef DTYPE_t[::1] ptrs = numpy.zeros(256, dtype = DTYPE)
+    cdef DTYPE8_t[::1] uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
+    cdef const DTYPE_t[:] idx = numpy.arange(uncompressed_size, dtype = DTYPE)
 
     f = 0xff & data[0]
 
@@ -41,7 +41,9 @@ def uncompress(numpy.ndarray[DTYPE8_t] data, DTYPE_t uncompressed_size):
         if f & i:
             r = ptrs[data[d]]
             n = 2 + data[d + 1]
-            uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
+            #uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
+            for j in range(n):
+                uncompressed[idx[s + j]] = uncompressed[r+j]
 
             ptrs[uncompressed[p] ^ uncompressed[pp]] = p
             if s == pp:
@@ -70,4 +72,4 @@ def uncompress(numpy.ndarray[DTYPE8_t] data, DTYPE_t uncompressed_size):
         else:
             i += i
 
-    return uncompressed
+    return numpy.asarray(uncompressed)
