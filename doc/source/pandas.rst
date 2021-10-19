@@ -24,7 +24,7 @@ For example:
     1   NaN
     2     3
     dtype: float64
-    >>>     print(ds.meta)
+    >>>     print(ds.attrs.meta)
     metadata(qtype=6)
 
     >>>     df =  q('flip `name`iq`fullname!(`Dent`Beeblebrox`Prefect;98 42 126;("Arthur Dent"; "Zaphod Beeblebrox"; "Ford Prefect"))')
@@ -33,7 +33,7 @@ For example:
     0        Dent   98        Arthur Dent
     1  Beeblebrox   42  Zaphod Beeblebrox
     2     Prefect  126       Ford Prefect
-    >>>     print(df.meta)
+    >>>     print(df.attrs.meta)
     metadata(iq=7, fullname=0, qtype=98, name=11)
     >>>     print(q('type', df))
     98
@@ -45,7 +45,7 @@ For example:
     1001 foo  d1 2001-01-01
     NaN  bar  d2 2000-05-01
     1003      d3        NaT
-    >>>     print(df.meta)
+    >>>     print(df.attrs.meta)
     metadata(dates=14, qtype=99, eid=7, sym=11, pos=11)
     >>>     print(q('type', df))
     99
@@ -74,7 +74,7 @@ rules:
 - tables are represented as ``pandas.DataFrame`` instances:
 
   - individual columns are represented as ``pandas.Series``.
-  - ``pandas.DataFrame`` is enriched with custom attribute ``meta``
+  - ``pandas.DataFrame.attrs`` attribute (which is a dictionary) contains a field ``meta``
     (:class:`qpython.MetaData`), which lists `qtype` for each column in table.
     Note that this information is used during ``pandas.DataFrame`` serialization.
 
@@ -160,7 +160,7 @@ provide information for ambiguous mappings.
     t = pandas.DataFrame(OrderedDict((('pos', pandas.Series(['A', 'B', 'C'])),
                                       ('dates', pandas.Series(numpy.array([numpy.datetime64('2001-01-01'), numpy.datetime64('2000-05-01'), numpy.datetime64('NaT')], dtype='datetime64[D]'))))))
 
-    t.meta = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST)
+    t.attrs['meta'] = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST)
 
     # pos dates
     # --------------
@@ -186,7 +186,7 @@ serialization index information is discarded::
                                       ('dates', pandas.Series(numpy.array([numpy.datetime64('2001-01-01'), numpy.datetime64('2000-05-01'), numpy.datetime64('NaT')], dtype='datetime64[D]'))))))
     t.reset_index(drop = True)
     t.set_index(['eid'], inplace = True)
-    t.meta = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST)
+    t.attrs['meta'] = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST)
 
     # pos dates
     # --------------
@@ -209,7 +209,7 @@ keyed table, use type hinting mechanism to enforce the serialization rules::
                                       ('dates', pandas.Series(numpy.array([numpy.datetime64('2001-01-01'), numpy.datetime64('2000-05-01'), numpy.datetime64('NaT')], dtype='datetime64[D]'))))))
     t.reset_index(drop = True)
     t.set_index(['eid'], inplace = True)
-    t.meta = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST, qtype = QKEYED_TABLE)
+    t.attrs['meta'] = MetaData(pos = QSYMBOL_LIST, dates = QDATE_LIST, qtype = QKEYED_TABLE)
 
     # eid | pos dates
     # ----| --------------
