@@ -16,7 +16,7 @@
 
 import binascii
 import struct
-import sys
+# import sys
 try:
     from cStringIO import BytesIO
 except ImportError:

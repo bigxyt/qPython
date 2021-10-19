@@ -27,6 +27,7 @@ from qpython.qreader import QReader, QReaderException
 from qpython.qcollection import QDictionary, qlist
 from qpython.qwriter import QWriter, QWriterException
 from qpython.qtype import *
+import warnings
 
 
 
@@ -47,13 +48,24 @@ class PandasQReader(QReader):
 
                 indices = keys.columns
                 table = keys
-                table.meta = keys.meta
-                table.meta.qtype = QKEYED_TABLE
-
-                for column in values.columns:
-                    table[column] = values[column]
-                    table.meta[column] = values.meta[column]
-
+                # meta attribute is obsolete, use attrs['meta'] instead
+                if hasattr(keys, 'meta'):
+                    table.attrs['meta'] = keys.meta
+                    warnings.warn("Usage of meta attribute is deprecated, please use attrs['meta'] instead",
+                                  DeprecationWarning)
+                else:
+                    table.attrs['meta'] = keys.attrs['meta']
+                table.attrs['meta'].qtype = QKEYED_TABLE
+                if hasattr(values,'meta'):
+                    warnings.warn("Usage of meta attribute is deprecated, please use attrs['meta'] instead",
+                                  DeprecationWarning)
+                    for column in values.columns:
+                        table[column] = values[column]
+                        table.attrs['meta'][column] = values.meta[column]
+                else:
+                    for column in values.columns:
+                        table[column] = values[column]
+                        table.attrs['meta'][column] = values.attrs['meta'][column]
                 table.set_index([column for column in indices], inplace = True)
 
                 return table
@@ -98,7 +110,7 @@ class PandasQReader(QReader):
                     odict[column_name] = data[i]
 
             df = pandas.DataFrame(odict)
-            df.meta = meta
+            df.attrs['meta'] = meta
             return df
         else:
             return QReader._read_table(self, qtype = qtype)
@@ -186,27 +198,33 @@ class PandasQWriter(QWriter):
 
 
     @serialize(pandas.DataFrame)
-    def _write_pandas_data_frame(self, data, qtype = None):
+    def _write_pandas_data_frame(self, data, qtype=None):
         data_columns = data.columns.values
-
-        if hasattr(data, 'meta') and data.meta.qtype == QKEYED_TABLE:
+        if hasattr(data, 'meta'):
+            meta = data.meta
+        elif 'meta' in data.attrs:
+            meta = data.attrs['meta']
+        else:
+            meta = None
+        if (meta is not None) and meta.qtype == QKEYED_TABLE:
             # data frame represents keyed table
             self._buffer.write(struct.pack('=b', QDICTIONARY))
             self._buffer.write(struct.pack('=bxb', QTABLE, QDICTIONARY))
             index_columns = data.index.names
             self._write(qlist(numpy.array(index_columns), qtype = QSYMBOL_LIST))
-            data.reset_index(inplace = True)
+            data.reset_index(inplace=True)
             self._buffer.write(struct.pack('=bxi', QGENERAL_LIST, len(index_columns)))
             for column in index_columns:
-                self._write_pandas_series(data[column], qtype = data.meta[column] if hasattr(data, 'meta') else None)
-
-            data.set_index(index_columns, inplace = True)
+                column_meta = meta[column] if column in meta else None
+                self._write_pandas_series(data[column], qtype=column_meta)
+            data.set_index(index_columns, inplace=True)
 
         self._buffer.write(struct.pack('=bxb', QTABLE, QDICTIONARY))
-        self._write(qlist(numpy.array(data_columns), qtype = QSYMBOL_LIST))
+        self._write(qlist(numpy.array(data_columns), qtype=QSYMBOL_LIST))
         self._buffer.write(struct.pack('=bxi', QGENERAL_LIST, len(data_columns)))
         for column in data_columns:
-            self._write_pandas_series(data[column], qtype = data.meta[column] if hasattr(data, 'meta') else None)
+            column_meta = meta[column] if hasattr(meta, column) else None
+            self._write_pandas_series(data[column], qtype=column_meta)
 
 
     @serialize(tuple, list)

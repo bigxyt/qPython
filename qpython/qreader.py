@@ -192,6 +192,7 @@ class QReader(object):
          
         :returns: read data (parsed or raw byte form)
         '''
+
         self._options = MetaData(**CONVERSION_OPTIONS.union_dict(**options))
 
         if is_compressed:
