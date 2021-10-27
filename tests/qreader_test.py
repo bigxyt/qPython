@@ -29,7 +29,7 @@ if sys.version > '3':
 from collections import OrderedDict
 from qpython import qreader
 from qpython.qtype import *  # @UnusedWildImport
-from qpython.qcollection import qlist, QList, QTemporalList, QDictionary, qtable, QKeyedTable
+from qpython.qcollection import qlist, QList, QTemporalList, QDictionary, qtable, QKeyedTable, QTable
 from qpython.qtemporal import qtemporal, QTemporal
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
@@ -285,7 +285,7 @@ def compare(left, right):
         return numpy.isnan(right.raw)
     elif type(left) == QTemporal and isinstance(left.raw, (numpy.datetime64, numpy.timedelta64)) and numpy.isnan(left.raw):
         return numpy.isnan(right.raw)
-    elif type(left) in [list, tuple, numpy.ndarray, QList, QTemporalList]:
+    elif type(left) in [list, tuple, numpy.ndarray, numpy.record, QList, QTemporalList, QTable]:
         return arrays_equal(left, right)
     elif type(left) == QFunction:
         return type(right) == QFunction
@@ -321,13 +321,13 @@ def test_reading():
 
         sys.stdout.write( '  %-75s' % query )
         try:
-            # header = buffer_reader.read_header(source = buffer_.getvalue())
-            # result = buffer_reader.read_data(message_size = header.size, is_compressed = header.is_compressed, raw = True)
-            # assert compare(buffer_.getvalue()[8:], result), 'raw reading failed: %s' % (query)
-            #
-            # stream_reader = qreader.QReader(buffer_)
-            # result = stream_reader.read(raw = True).data
-            # assert compare(buffer_.getvalue()[8:], result), 'raw reading failed: %s' % (query)
+            header = buffer_reader.read_header(source = buffer_.getvalue())
+            result = buffer_reader.read_data(message_size = header.size, is_compressed = header.is_compressed, raw = True)
+            assert compare(buffer_.getvalue()[8:], result), 'raw reading failed: %s' % (query)
+
+            stream_reader = qreader.QReader(buffer_)
+            result = stream_reader.read(raw = True).data
+            assert compare(buffer_.getvalue()[8:], result), 'raw reading failed: %s' % (query)
 
             result = buffer_reader.read(source = buffer_.getvalue()).data
             assert compare(value, result), 'deserialization failed: %s, expected: %s actual: %s' % (query, value, result)
@@ -386,7 +386,7 @@ def test_reading_numpy_temporals():
 def test_reading_compressed():
     BINARY = OrderedDict()
 
-    with open(os.path.join(TEST_DATA_DIR, 'QExpressions3.out'), 'rb') as f:
+    with open(os.path.join(TEST_DATA_DIR, 'QCompressedExpressions3.out'), 'rb') as f:
         while True:
             query = f.readline().strip()
             binary = f.readline().strip()
