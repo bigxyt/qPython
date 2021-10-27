@@ -60,13 +60,13 @@ EXPRESSIONS = OrderedDict((
                                                                       qtemporal(numpy.datetime64('NaT', 'D'), qtype=QDATE),
                                                                       numpy.datetime64('NaT', 'D'))),
                    (b'2000.01.04T05:36:57.600 0Nz',                   (qlist(numpy.array([3.234, qnull(QDATETIME)]), qtype=QDATETIME_LIST),
-                                                                      qlist(array_to_raw_qtemporal(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ms'), numpy.datetime64('nat', 'ms')]), qtype=QDATETIME_LIST), qtype=QDATETIME_LIST),
+                                                                      qlist(array_to_raw_qtemporal(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ms'), numpy.datetime64('nat', 'ms')]), qtype=QDATETIME_LIST), qtype=QDATETIME_LIST),
                                                                       qlist([3.234, qnull(QDATETIME)], qtype=QDATETIME_LIST),
-                                                                      qlist(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ms'), numpy.datetime64('nat', 'ms')]), qtype = QDATETIME_LIST),
-                                                                      numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ms'), numpy.datetime64('nat', 'ms')])
+                                                                      qlist(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ms'), numpy.datetime64('nat', 'ms')]), qtype = QDATETIME_LIST),
+                                                                      numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ms'), numpy.datetime64('nat', 'ms')])
                                                                       )),
-                   (b'2000.01.04T05:36:57.600',                       (qtemporal(numpy.datetime64('2000-01-04T05:36:57.600Z', 'ms'), qtype=QDATETIME),
-                                                                      numpy.datetime64('2000-01-04T05:36:57.600Z', 'ms'))),
+                   (b'2000.01.04T05:36:57.600',                       (qtemporal(numpy.datetime64('2000-01-04T05:36:57.600', 'ms'), qtype=QDATETIME),
+                                                                      numpy.datetime64('2000-01-04T05:36:57.600', 'ms'))),
                    (b'0Nz',                                           (qtemporal(qnull(QDATETIME), qtype=QDATETIME),
                                                                       qtemporal(numpy.datetime64('NaT', 'ms'), qtype=QDATETIME),
                                                                       numpy.datetime64('NaT', 'ms'))),
@@ -103,13 +103,13 @@ EXPRESSIONS = OrderedDict((
                                                                       qtemporal(numpy.timedelta64('NaT', 'ms'), qtype=QTIME),
                                                                       numpy.timedelta64('NaT', 'ms'))),
                    (b'2000.01.04D05:36:57.600 0Np',                   (qlist(numpy.array([long(279417600000000), qnull(QTIMESTAMP)]), qtype=QTIMESTAMP_LIST),
-                                                                      qlist(array_to_raw_qtemporal(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ns'), numpy.datetime64('nat', 'ns')]), qtype=QTIMESTAMP_LIST), qtype=QTIMESTAMP_LIST),
+                                                                      qlist(array_to_raw_qtemporal(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ns'), numpy.datetime64('nat', 'ns')]), qtype=QTIMESTAMP_LIST), qtype=QTIMESTAMP_LIST),
                                                                       qlist([long(279417600000000), qnull(QTIMESTAMP)], qtype=QTIMESTAMP_LIST),
-                                                                      qlist(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ns'), numpy.datetime64('nat', 'ns')]), qtype = QTIMESTAMP_LIST),
-                                                                      numpy.array([numpy.datetime64('2000-01-04T05:36:57.600Z', 'ns'), numpy.datetime64('nat', 'ns')])
+                                                                      qlist(numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ns'), numpy.datetime64('nat', 'ns')]), qtype = QTIMESTAMP_LIST),
+                                                                      numpy.array([numpy.datetime64('2000-01-04T05:36:57.600', 'ns'), numpy.datetime64('nat', 'ns')])
                                                                       )),
-                   (b'2000.01.04D05:36:57.600',                       (qtemporal(numpy.datetime64('2000-01-04T05:36:57.600Z', 'ns'), qtype=QTIMESTAMP),
-                                                                      numpy.datetime64('2000-01-04T05:36:57.600Z', 'ns'))),
+                   (b'2000.01.04D05:36:57.600',                       (qtemporal(numpy.datetime64('2000-01-04T05:36:57.600', 'ns'), qtype=QTIMESTAMP),
+                                                                      numpy.datetime64('2000-01-04T05:36:57.600', 'ns'))),
                    (b'0Np',                                           (qtemporal(qnull(QTIMESTAMP), qtype=QTIMESTAMP),
                                                                       qtemporal(numpy.datetime64('NaT', 'ns'), qtype=QTIMESTAMP),
                                                                       numpy.datetime64('NaT', 'ns'))),
@@ -197,9 +197,9 @@ EXPRESSIONS = OrderedDict((
                    (b'`jumps`over`a`lazy`dog',                        (numpy.array(['jumps', 'over', 'a', 'lazy', 'dog'], dtype=numpy.string_),
                                                                       qlist(numpy.array(['jumps', 'over', 'a', 'lazy', 'dog']), qtype = QSYMBOL_LIST),
                                                                       qlist(['jumps', 'over', 'a', 'lazy', 'dog'], qtype = QSYMBOL_LIST))),
-                   (b'`the`quick`brown`fox',                          numpy.array([numpy.string_('the'), numpy.string_('quick'), numpy.string_('brown'), numpy.string_('fox')], dtype=numpy.object)),
-                   (b'``quick``fox',                                  qlist(numpy.array([qnull(QSYMBOL), numpy.string_('quick'), qnull(QSYMBOL), numpy.string_('fox')], dtype=numpy.object), qtype=QSYMBOL_LIST)),
-                   (b'``',                                            qlist(numpy.array([qnull(QSYMBOL), qnull(QSYMBOL)], dtype=numpy.object), qtype=QSYMBOL_LIST)),
+                   (b'`the`quick`brown`fox',                          numpy.array([numpy.string_('the'), numpy.string_('quick'), numpy.string_('brown'), numpy.string_('fox')], dtype=object)),
+                   (b'``quick``fox',                                  qlist(numpy.array([qnull(QSYMBOL), numpy.string_('quick'), qnull(QSYMBOL), numpy.string_('fox')], dtype=object), qtype=QSYMBOL_LIST)),
+                   (b'``',                                            qlist(numpy.array([qnull(QSYMBOL), qnull(QSYMBOL)], dtype=object), qtype=QSYMBOL_LIST)),
                    (b'("quick"; "brown"; "fox"; "jumps"; "over"; "a lazy"; "dog")',
                                                                      (['quick', 'brown', 'fox', 'jumps', 'over', 'a lazy', 'dog'],
                                                                       qlist(numpy.array(['quick', 'brown', 'fox', 'jumps', 'over', 'a lazy', 'dog']), qtype = QSTRING_LIST),
@@ -342,7 +342,6 @@ EXPRESSIONS = OrderedDict((
                 ))
 
 
-
 def init():
     with open(os.path.join(TEST_DATA_DIR, 'QExpressions3.out'), 'rb') as f:
         while True:
@@ -355,28 +354,28 @@ def init():
             BINARY[query] = binary
 
 
-
 def test_writing():
     w = qwriter.QWriter(None, 3)
 
     for query, value in iter(EXPRESSIONS.items()):
-        sys.stdout.write( '%-75s' % query )
+        sys.stdout.write('%-75s' % query)
         if isinstance(value, tuple):
             for obj in value:
-                sys.stdout.write( '.' )
+                sys.stdout.write('.')
                 serialized = binascii.hexlify(w.write(obj, 1))[16:].lower()
                 assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (query,  BINARY[query].lower(), serialized)
         elif isinstance(value, dict):
-            sys.stdout.write( '.' )
+            sys.stdout.write('.')
             single_char_strings = value['single_char_strings'] if 'single_char_strings' in value else False
             serialized = binascii.hexlify(w.write(value['data'], 1, single_char_strings = single_char_strings))[16:].lower()
             assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (query,  BINARY[query].lower(), serialized)
         else:
-            sys.stdout.write( '.' )
+            sys.stdout.write('.')
             serialized = binascii.hexlify(w.write(value, 1))[16:].lower()
             assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (query,  BINARY[query].lower(), serialized)
 
         print('')
+
 
 def test_write_single_char_string():
     w = qwriter.QWriter(None, 3)

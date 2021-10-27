@@ -314,7 +314,7 @@ try:
                 data = value
             serialized = binascii.hexlify(w.write(data, 1, single_char_strings = single_char_strings, pandas = True))[16:].lower()
             assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (value,  BINARY[query].lower(), serialized)
-            sys.stdout.write( '.' )
+            sys.stdout.write('.')
 
             print('')
 
@@ -330,7 +330,7 @@ try:
                 data = value
             serialized = binascii.hexlify(w.write(data, 1))[16:].lower()
             assert serialized == BINARY[query].lower(), 'serialization failed: %s, expected: %s actual: %s' % (value,  BINARY[query].lower(), serialized)
-            sys.stdout.write( '.' )
+            sys.stdout.write('.')
 
             print('')
 
