@@ -71,7 +71,7 @@ Instructions:
 Requirements
 ~~~~~~~~~~~~
 
-qPython requires numpy 1.8 to run.
+qPython requires numpy 1.14.0+ to run.
 
 Optional requirements have to be met to provide additional features:
 
@@ -81,7 +81,7 @@ Optional requirements have to be met to provide additional features:
 
 - support serialization/deserialization of ``pandas.Series`` and ``pandas.DataFrame``
 
-  - pandas 0.14.0
+  - pandas 1.0.4
 
 - run Twisted sample:
 
