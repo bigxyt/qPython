@@ -56,7 +56,7 @@ class PandasQReader(QReader):
                 else:
                     table.attrs['meta'] = keys.attrs['meta']
                 table.attrs['meta'].qtype = QKEYED_TABLE
-                if hasattr(values,'meta'):
+                if hasattr(values, 'meta'):
                     warnings.warn("Usage of meta attribute is deprecated, please use attrs['meta'] instead",
                                   DeprecationWarning)
                     for column in values.columns:
@@ -159,6 +159,9 @@ class PandasQWriter(QWriter):
         if qtype is None and hasattr(data, 'meta'):
             qtype = -abs(data.meta.qtype)
 
+        if qtype is None and 'meta' in data.attrs:
+            qtype = -abs(data.attrs['meta'].qtype)
+
         if data.dtype == '|S1':
             qtype = QCHAR
 
@@ -198,33 +201,41 @@ class PandasQWriter(QWriter):
 
 
     @serialize(pandas.DataFrame)
-    def _write_pandas_data_frame(self, data, qtype=None):
+    def _write_pandas_data_frame(self, data, qtype = None):
         data_columns = data.columns.values
+        restore_meta_attr = False
+        meta = None
+
         if hasattr(data, 'meta'):
             meta = data.meta
         elif 'meta' in data.attrs:
-            meta = data.attrs['meta']
-        else:
-            meta = None
-        if (meta is not None) and meta.qtype == QKEYED_TABLE:
+            meta = data.attrs.pop('meta')
+            restore_meta_attr = True
+
+        meta_is_defined = meta is not None
+
+        if meta_is_defined and meta.qtype == QKEYED_TABLE:
             # data frame represents keyed table
             self._buffer.write(struct.pack('=b', QDICTIONARY))
             self._buffer.write(struct.pack('=bxb', QTABLE, QDICTIONARY))
-            index_columns = data.index.names
-            self._write(qlist(numpy.array(index_columns), qtype = QSYMBOL_LIST))
-            data.reset_index(inplace=True)
+            index_columns = list(data.index.names)
+            self._write(qlist(numpy.array(index_columns), qtype=QSYMBOL_LIST))
+            data.reset_index(inplace = True)
             self._buffer.write(struct.pack('=bxi', QGENERAL_LIST, len(index_columns)))
             for column in index_columns:
-                column_meta = meta[column] if column in meta else None
-                self._write_pandas_series(data[column], qtype=column_meta)
-            data.set_index(index_columns, inplace=True)
+                column_meta = meta[column]
+                self._write_pandas_series(data[column], qtype = column_meta)
+            data.set_index(index_columns, inplace = True)
 
         self._buffer.write(struct.pack('=bxb', QTABLE, QDICTIONARY))
         self._write(qlist(numpy.array(data_columns), qtype=QSYMBOL_LIST))
         self._buffer.write(struct.pack('=bxi', QGENERAL_LIST, len(data_columns)))
         for column in data_columns:
-            column_meta = meta[column] if hasattr(meta, column) else None
-            self._write_pandas_series(data[column], qtype=column_meta)
+            column_meta = meta[column] if meta_is_defined else None
+            self._write_pandas_series(data[column], qtype = column_meta)
+
+        if meta_is_defined and restore_meta_attr:
+            data.attrs['meta'] = meta
 
 
     @serialize(tuple, list)
