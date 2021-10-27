@@ -280,12 +280,17 @@ try:
                 result = stream_reader.read(pandas = True).data
                 if isinstance(value, dict):
                     if 'index' in value:
-                        meta = result.meta
+                        meta = result.attrs['meta']
                         result = result.reset_index()
-                        result.meta = meta
+                        result.attrs['meta'] = meta
 
                     if not 'compare_meta' in value or value['compare_meta']:
-                        assert value['meta'].as_dict() == result.meta.as_dict(), 'deserialization failed qtype: %s, expected: %s actual: %s' % (query, value['meta'], result.meta)
+                        if hasattr(result, 'meta'):
+                            assert value['meta'].as_dict() == \
+                                   result.meta.as_dict(), 'deserialization failed qtype: %s, expected: %s actual: %s' % (query, value['meta'], result.meta)
+                        else:
+                            assert value['meta'].as_dict() == \
+                                   result.attrs['meta'].as_dict(), 'deserialization failed qtype: %s, expected: %s actual: %s' % (query, value['meta'], result.attrs['meta'])
                     assert compare(value['data'], result), 'deserialization failed: %s, expected: %s actual: %s' % (query, value['data'], result)
                 else:
                     assert compare(value, result), 'deserialization failed: %s, expected: %s actual: %s' % (query, value, result)
@@ -309,7 +314,7 @@ try:
                     data = data.set_index(value['index'])
                 if 'single_char_strings' in value:
                     single_char_strings = value['single_char_strings']
-                data.meta = value['meta']
+                data.attrs['meta'] = value['meta']
             else:
                 data = value
             serialized = binascii.hexlify(w.write(data, 1, single_char_strings = single_char_strings, pandas = True))[16:].lower()
