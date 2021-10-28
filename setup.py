@@ -20,7 +20,7 @@ from distutils.core import setup
 from qpython import __version__
 
 try:
-    import numpy
+    import numpy as np
 
     include_dirs = [np.get_include()]
 except ImportError:
