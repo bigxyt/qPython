@@ -1,6 +1,8 @@
-pytest>=2.5.0
+cython>=0.20
+flake8
+mock>=1.0.1
 numpy>=1.14.0
 pandas>=1.0.0
-cython>=0.20
+pytest>=2.5.0
 twisted>=13.2.0
-mock>=1.0.1
+

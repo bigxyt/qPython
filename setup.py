@@ -14,15 +14,16 @@
 #  limitations under the License.
 #
 
-from distutils.core import setup
-from qpython import __version__
-
 import os
+from distutils.core import setup
+
+from qpython import __version__
 
 try:
     import numpy
-    include_dirs = [numpy.get_include()]
-except:
+
+    include_dirs = [np.get_include()]
+except ImportError:
     include_dirs = []
 
 try:
@@ -43,21 +44,20 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-
-setup(name = 'qPython',
-      version = __version__,
-      description = 'kdb+ interfacing library for Python',
+setup(name='qPython',
+      version=__version__,
+      description='kdb+ interfacing library for Python',
       long_description=read('README.rst'),
 
-      author = 'exxeleron',
-      author_email = 'kdbtools@devnet.de',
-      url = 'http://github.com/exxeleron/qPython',
-      license = 'Apache License Version 2.0',
+      author='exxeleron',
+      author_email='kdbtools@devnet.de',
+      url='http://github.com/exxeleron/qPython',
+      license='Apache License Version 2.0',
 
-      ext_modules = ext_modules,
-      include_dirs = include_dirs,
+      ext_modules=ext_modules,
+      include_dirs=include_dirs,
 
-      keywords = ['kdb+', 'q'],
+      keywords=['kdb+', 'q'],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
@@ -81,8 +81,8 @@ setup(name = 'qPython',
           'Topic :: Database :: Front-Ends',
           'Topic :: Scientific/Engineering',
           'Topic :: Software Development',
-          ],
-      packages = ['qpython'],
-      package_data = {'qpython': ['fastutils.pyx']},
-      data_files = [('', ['LICENSE', 'CHANGELOG.txt', 'README.rst', 'requirements.txt'])]
-     )
+      ],
+      packages=['qpython'],
+      package_data={'qpython': ['fastutils.pyx']},
+      data_files=[('', ['LICENSE', 'CHANGELOG.txt', 'README.rst', 'requirements.txt'])]
+      )
