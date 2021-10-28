@@ -131,7 +131,7 @@ class PandasQReader(QReader):
 
         if self._options.pandas:
             atom_qtype = -abs(qtype)
-            if atom_qtype not in [QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL]:
+            if atom_qtype not in [QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL, QFLOAT, QDOUBLE, QGUID]:
                 null = QNULLMAP[atom_qtype][1]
                 if atom_qtype in PANDAS_TYPE:
                     ps = pandas.Series(data = qlist, dtype = PANDAS_TYPE[atom_qtype]).replace(null, pandas.NA)
