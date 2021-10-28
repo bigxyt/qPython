@@ -63,11 +63,11 @@ rules:
     parsing with ``numpy_temporals`` flag set to ``True`` (to ensure that
     temporal vectors are represented as numpy ``datetime64``/``timedelta64``
     arrays).
-  - q nulls are replaced with ``numpy.NaN``. This can result in type promotion
+  - q nulls are replaced with ``pandas.NA``. This can result in type promotion
     as described in `pandas documentation <http://pandas.pydata.org/pandas-docs/stable/gotchas.html#support-for-integer-na>`_.
   - ``pandas.Series`` is enriched with custom attribute ``meta``
     (:class:`qpython.MetaData`), which contains `qtype` of the vector. Note
-    that this information is used while serializaing ``pandas.Series`` instance
+    that this information is used while serializing ``pandas.Series`` instance
     to IPC protocol.
 
 

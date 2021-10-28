@@ -31,6 +31,13 @@ import warnings
 
 
 
+PANDAS_TYPE = {
+    QSHORT:         "Int16",
+    QINT:           "Int32",
+    QLONG:          "Int64",
+    }
+
+
 class PandasQReader(QReader):
 
     _reader_map = dict.copy(QReader._reader_map)
@@ -123,9 +130,13 @@ class PandasQReader(QReader):
         qlist = QReader._read_list(self, qtype = qtype)
 
         if self._options.pandas:
-            if -abs(qtype) not in [QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL]:
-                null = QNULLMAP[-abs(qtype)][1]
-                ps = pandas.Series(data = qlist).replace(null, numpy.NaN)
+            atom_qtype = -abs(qtype)
+            if atom_qtype not in [QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL, QFLOAT, QDOUBLE, QGUID]:
+                null = QNULLMAP[atom_qtype][1]
+                if atom_qtype in PANDAS_TYPE:
+                    ps = pandas.Series(data = qlist, dtype = PANDAS_TYPE[atom_qtype]).replace(null, pandas.NA)
+                else:
+                    ps = pandas.Series(data = qlist).replace(null, pandas.NA)
             else:
                 ps = pandas.Series(data = qlist)
 

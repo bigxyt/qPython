@@ -19,6 +19,7 @@ from qpython import MetaData
 from qpython.qtemporal import qtemporal, from_raw_qtemporal, to_raw_qtemporal
 
 
+
 class QList(numpy.ndarray):
     '''An array object represents a q vector.'''
 
@@ -197,6 +198,7 @@ def qlist(array, adjust_dtype = True, **meta):
 
 
 
+
 class QDictionary(object):
     '''Represents a q dictionary.
     
@@ -217,10 +219,6 @@ class QDictionary(object):
      - `values` (`QList`, `QTable`, `tuple` or `list`) - dictionary values
     '''
     def __init__(self, keys, values):
-        if not isinstance(keys, (QList, tuple, list, numpy.ndarray)):
-            raise ValueError('%s expects keys to be of type: QList, tuple or list. Actual type: %s' % (self.__class__.__name__, type(keys)))
-        if not isinstance(values, (QTable, QList, tuple, list, numpy.ndarray)):
-            raise ValueError('%s expects values to be of type: QTable, QList, tuple or list. Actual type: %s' % (self.__class__.__name__, type(values)))
         if len(keys) != len(values):
             raise ValueError('Number of keys: %d doesn`t match number of values: %d' % (len(keys), len(values)))
 
