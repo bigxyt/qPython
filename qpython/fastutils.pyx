@@ -14,6 +14,8 @@
 #  limitations under the License.
 #
 
+#cython: language_level=3
+
 import numpy
 cimport numpy
 
