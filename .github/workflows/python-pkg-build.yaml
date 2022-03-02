@@ -30,7 +30,7 @@ jobs:
     - name: Compile Cython extensions
       run: python setup.py build_ext --inplace
     - name: Build package
-      run: python setup.py bdist
+      run: python setup.py sdist
     - name: Publish package to TestPyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
