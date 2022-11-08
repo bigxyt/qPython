@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'research/python-env:796206ff6753057d5053ada6bd12c673fd4188b4'
+            image 'research/python-qpython-env:99fb7f9cbe9720187984dc160e78742876bc9007'
             registryUrl 'https://docker.big-xyt.com/'
             registryCredentialsId 'tu_nexus'
         }
