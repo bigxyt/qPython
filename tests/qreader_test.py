@@ -36,6 +36,7 @@ TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
 EXPRESSIONS = OrderedDict((
+                    (b'`ob',                                           qtemporal(numpy.datetime64('NaT', 'M'), qtype=QMONTH)),
                     (b'0Nm',                                           qtemporal(numpy.datetime64('NaT', 'M'), qtype=QMONTH)),
                     (b'("G"$"8c680a01-5a49-5aab-5a65-d4bfddb6a661"; 0Ng)',
                                                                        qlist(numpy.array([uuid.UUID('8c680a01-5a49-5aab-5a65-d4bfddb6a661'), qnull(QGUID)]), qtype=QGUID_LIST)),
@@ -65,7 +66,6 @@ EXPRESSIONS = OrderedDict((
                     (b'0D05:36:57.600 0Nn',                            qlist(numpy.array([long(20217600000000), qnull(QTIMESPAN)]), qtype=QTIMESPAN_LIST)),
                     (b'0D05:36:57.600',                                qtemporal(numpy.timedelta64(20217600000000, 'ns'), qtype=QTIMESPAN)),
                     (b'0Nn',                                           qtemporal(numpy.timedelta64('NaT', 'ns'), qtype=QTIMESPAN)),
-
                     (b'::',                                            None),
                     (b'1+`',                                           QException(b'type')),
                     (b'1',                                             numpy.int64(1)),
@@ -165,11 +165,20 @@ EXPRESSIONS = OrderedDict((
                                                                              [qlist(numpy.array(['Dent', 'Beeblebrox', 'Prefect']), qtype = QSYMBOL_LIST),
                                                                               qlist(numpy.array([98, 42, 126]), qtype = QLONG_LIST),
                                                                               [b"Arthur Dent", b" ", b"Ford Prefect"]])),
-                    (b'([] sc:1 2 3; nsc:(1 2; 3 4; 5 6 7))',         qtable(qlist(numpy.array(['sc', 'nsc']), qtype = QSYMBOL_LIST),
-                                                                             [qlist(numpy.array([1, 2, 3]), qtype = QLONG_LIST),
+                    (b'([] sc:1 2 3; nsc:(1 2; 3 4; 5 6 7))', qtable(qlist(numpy.array(['sc', 'nsc']), qtype=QSYMBOL_LIST),
+                                                                     [qlist(numpy.array([1, 2, 3]), qtype=QLONG_LIST),
+                                                                      [qlist(numpy.array([1, 2]), qtype=QLONG_LIST),
+                                                                       qlist(numpy.array([3, 4]), qtype=QLONG_LIST),
+                                                                       qlist(numpy.array([5, 6, 7]), qtype=QLONG_LIST)]])),
+                    (b'([] i:1 2; ni:(1 2; 3 4 5); f: .1 .2; nf:(.1 .2; .3 .4 .5))',
+                                                                      qtable(qlist(numpy.array(['i', 'ni', 'f', 'nf']), qtype = QSYMBOL_LIST),
+                                                                             [qlist(numpy.array([1, 2]), qtype = QLONG_LIST),
                                                                               [qlist(numpy.array([1, 2]), qtype = QLONG_LIST),
-                                                                               qlist(numpy.array([3, 4]), qtype = QLONG_LIST),
-                                                                               qlist(numpy.array([5, 6, 7]), qtype = QLONG_LIST)]])),
+                                                                               qlist(numpy.array([3, 4, 5]), qtype = QLONG_LIST)],
+                                                                              qlist(numpy.array([.1, .2]), qtype= QDOUBLE_LIST),
+                                                                              [qlist(numpy.array([.1, .2]), qtype=QDOUBLE_LIST),
+                                                                               qlist(numpy.array([.3, .4, .5]), qtype=QDOUBLE_LIST)]
+                                                                              ])),
                     (b'([] sc:1 2 3; nsc:(1 2; 3 4; 5 6))',           qtable(qlist(numpy.array(['sc', 'nsc']), qtype = QSYMBOL_LIST),
                                                                              [qlist(numpy.array([1, 2, 3]), qtype = QLONG_LIST),
                                                                               [qlist(numpy.array([1, 2]), qtype = QLONG_LIST),
