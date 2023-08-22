@@ -44,14 +44,14 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-setup(name='qPython',
+setup(name='qPythonX',
       version=__version__,
       description='kdb+ interfacing library for Python',
       long_description=read('README.rst'),
 
-      author='exxeleron',
-      author_email='kdbtools@devnet.de',
-      url='http://github.com/exxeleron/qPython',
+      author='big xyt GmbH',
+      author_email='info@big-xyt.com',
+      url='http://github.com/bigxyt/qPython',
       license='Apache License Version 2.0',
 
       ext_modules=ext_modules,
@@ -73,11 +73,11 @@ setup(name='qPython',
           'Operating System :: Unix',
           'Programming Language :: Python',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.4',
-          'Programming Language :: Python :: 3.5',
-          'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: 3.8',
+          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
+          'Programming Language :: Python :: 3.11'
           'Topic :: Database :: Front-Ends',
           'Topic :: Scientific/Engineering',
           'Topic :: Software Development',
