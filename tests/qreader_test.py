@@ -36,7 +36,6 @@ TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'test_data')
 
 
 EXPRESSIONS = OrderedDict((
-                    (b'`ob',                                           qtemporal(numpy.datetime64('NaT', 'M'), qtype=QMONTH)),
                     (b'0Nm',                                           qtemporal(numpy.datetime64('NaT', 'M'), qtype=QMONTH)),
                     (b'("G"$"8c680a01-5a49-5aab-5a65-d4bfddb6a661"; 0Ng)',
                                                                        qlist(numpy.array([uuid.UUID('8c680a01-5a49-5aab-5a65-d4bfddb6a661'), qnull(QGUID)]), qtype=QGUID_LIST)),

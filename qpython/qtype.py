@@ -187,7 +187,6 @@ PY_TYPE = {
 # mapping of Python types to corresponding q atoms
 Q_TYPE = {
     bool             : QBOOL,
-    numpy.bool       : QBOOL,
     numpy.bool_      : QBOOL,
     numpy.byte       : QBYTE,
     numpy.int16      : QSHORT,

@@ -78,6 +78,8 @@ class QConnection(object):
     '''
 
 
+    MAX_PROTOCOL_VERSION = 3
+
     def __init__(self, host, port, username = None, password = None, timeout = None, encoding = 'latin-1', reader_class = None, writer_class = None, **options):
         self.host = host
         self.port = port
@@ -186,7 +188,7 @@ class QConnection(object):
         '''Performs a IPC protocol handshake.'''
         credentials = (self.username if self.username else '') + ':' + (self.password if self.password else '')
         credentials = credentials.encode(self._encoding)
-        self._connection.send(credentials + b'\3\0')
+        self._connection.send(credentials + bytes([self.MAX_PROTOCOL_VERSION, 0]))
         response = self._connection.recv(1)
 
         if len(response) != 1:
@@ -199,7 +201,7 @@ class QConnection(object):
                 self.close()
                 raise QAuthenticationException('Connection denied.')
 
-        self._protocol_version = min(struct.unpack('B', response)[0], 3)
+        self._protocol_version = min(struct.unpack('B', response)[0], self.MAX_PROTOCOL_VERSION)
 
 
     def __str__(self):

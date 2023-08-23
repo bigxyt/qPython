@@ -16,7 +16,7 @@
 
 from qpython.qtype import *  # @UnusedWildImport
 from qpython import MetaData
-from qpython.qtemporal import qtemporal, from_raw_qtemporal, to_raw_qtemporal
+from qpython.qtemporal import qtemporal, QTemporal, from_raw_qtemporal, to_raw_qtemporal
 
 
 
@@ -28,7 +28,9 @@ class QList(numpy.ndarray):
         self.meta = MetaData(**meta)
 
     def __eq__(self, other):
-        return numpy.array_equal(self, other)
+        if (type(other) == QList or type(other).__module__ == 'pandas.core.series' and type(other).__name__ == 'Series'):
+            return numpy.array_equal(self, other)
+        return super().__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -67,7 +69,11 @@ class QTemporalList(QList):
         '''
         return numpy.ndarray.__getitem__(self, idx)
 
+    def __repr__(self):
+        return 'QTemporalList({}, qtype={})'.format(numpy.array2string(self, separator=', ', formatter={"int": QTemporal.__str__}), -abs(self.meta.qtype))
 
+    def __str__(self):
+        return numpy.array2string(self, separator=', ', formatter={"int": QTemporal.__str__})
 
 def get_list_qtype(array):
     '''Finds out a corresponding qtype for a specified `QList`/`numpy.ndarray` 
@@ -395,7 +401,7 @@ def qtable(columns, data, **meta):
 class QKeyedTable(object):
     '''Represents a q keyed table.
     
-    :class:`.QKeyedTable` is built with two :class:`.QTable`\s, one representing
+    :class:`.QKeyedTable` is built with two :class:`.QTable`s, one representing
     keys and the other values.
     
     Keyed tables example:

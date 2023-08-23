@@ -17,7 +17,7 @@
 import binascii
 import os
 import struct
-# import sys
+
 try:
     from cStringIO import BytesIO
 except ImportError:
@@ -313,6 +313,7 @@ try:
                     data = data.set_index(value['index'])
                 if 'single_char_strings' in value:
                     single_char_strings = value['single_char_strings']
+                data._metadata = ['meta']
                 data.attrs['meta'] = value['meta']
             else:
                 data = value
