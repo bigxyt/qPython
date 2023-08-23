@@ -27,6 +27,8 @@ from qpython.qreader import QReader, QReaderException
 from qpython.qcollection import QDictionary, qlist
 from qpython.qwriter import QWriter, QWriterException
 from qpython.qtype import *
+
+import numpy as np
 import warnings
 
 
@@ -105,7 +107,7 @@ class PandasQReader(QReader):
                 elif isinstance(data[i], bytes):
                     # convert character list (represented as string) to numpy representation
                     meta[column_name] = QSTRING
-                    odict[column_name] = pandas.Series(list(data[i].decode()), dtype = numpy.str).replace(b' ', numpy.nan)
+                    odict[column_name] = pandas.Series(list(data[i].decode()), dtype = str).replace(b' ', numpy.nan)
                 elif isinstance(data[i], (list, tuple)):
                     meta[column_name] = QGENERAL_LIST
                     tarray = numpy.ndarray(shape = len(data[i]), dtype = numpy.dtype('O'))
@@ -117,6 +119,7 @@ class PandasQReader(QReader):
                     odict[column_name] = data[i]
 
             df = pandas.DataFrame(odict)
+            df._metadata = ["meta"]
             df.attrs['meta'] = meta
             return df
         else:
@@ -131,7 +134,7 @@ class PandasQReader(QReader):
 
         if self._options.pandas:
             atom_qtype = -abs(qtype)
-            if atom_qtype not in [QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL, QFLOAT, QDOUBLE, QGUID]:
+            if atom_qtype not in [QBOOL, QMONTH, QDATE, QDATETIME, QMINUTE, QSECOND, QTIME, QTIMESTAMP, QTIMESPAN, QSYMBOL, QFLOAT, QDOUBLE, QGUID]:
                 null = QNULLMAP[atom_qtype][1]
                 if atom_qtype in PANDAS_TYPE:
                     ps = pandas.Series(data = qlist, dtype = PANDAS_TYPE[atom_qtype]).replace(null, pandas.NA)
@@ -196,7 +199,7 @@ class PandasQWriter(QWriter):
         if qtype == QGENERAL_LIST:
             self._write_generic_list(data.values)
         elif qtype == QCHAR:
-            self._write_string(data.replace(numpy.nan, ' ').values.astype(numpy.string_).tostring())
+            self._write_string(data.replace(numpy.nan, ' ').values.astype(numpy.string_).tobytes())
         elif data.dtype.type not in (numpy.datetime64, numpy.timedelta64):
             data = data.fillna(QNULLMAP[-abs(qtype)][1])
             data = data.values

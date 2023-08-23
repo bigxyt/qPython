@@ -49,7 +49,7 @@ class QMessage(object):
      - `data` - data payload
      - `message_type` (one of the constants defined in :class:`.MessageType`) -
        type of the message
-     - `message_size` (`integer`) - size of the message
+     - `message_size` (`int`) - size of the message
      - `is_compressed` (`boolean`) - indicates whether message is compressed
     '''
 
@@ -179,7 +179,7 @@ class QReader(object):
                   the :func:`.read_data`
         
         :Parameters:
-         - `message_size` (`integer`) - size of the message to be read
+         - `message_size` (`int`) - size of the message to be read
          - `is_compressed` (`boolean`) - indicates whether data is compressed
         :Options:
          - `raw` (`boolean`) - indicates whether read data should parsed or 
@@ -206,7 +206,7 @@ class QReader(object):
                 raise QReaderException('Error while data decompression.')
 
             raw_data = uncompress(raw_data, numpy.intc(uncompressed_size))
-            raw_data = numpy.ndarray.tostring(raw_data)
+            raw_data = numpy.ndarray.tobytes(raw_data)
             self._buffer.wrap(raw_data)
         elif self._stream:
             raw_data = self._read_bytes(message_size - 8)
@@ -285,7 +285,7 @@ class QReader(object):
 
     def _read_list(self, qtype):
         self._buffer.skip()  # ignore attributes
-        length = self._buffer.get_int()
+        length = self._buffer.get_uint()
         conversion = PY_TYPE.get(-qtype, None)
 
         if qtype == QSYMBOL_LIST:
@@ -499,6 +499,22 @@ class QReader(object):
             :returns: single integer
             '''
             return self.get('i')
+
+
+        def get_uint(self):
+            '''
+            Gets a single 32-bit unsigned integer from the buffer.
+            :returns: single integer
+            '''
+            return self.get('I')
+
+
+        def get_long(self):
+            '''
+            Gets a single 64-bit integer from the buffer.
+            :returns: single integer
+            '''
+            return self.get('q')
 
 
         def get_symbol(self):

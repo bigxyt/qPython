@@ -1,6 +1,6 @@
 cython>=0.20
 mock>=1.0.1
-numpy>=1.14.0,<1.20.0
-pandas>=1.0.0,<1.4.0
+numpy>=1.14.0
+pandas>=1.0.0
 pytest>=2.5.0
 twisted>=13.2.0

@@ -67,6 +67,9 @@ class QTemporal(object):
         return self._datetime
 
     def __str__(self):
+        return '%s' % (self._datetime)
+
+    def __repr__(self):
         return '%s [%s]' % (self._datetime, self.meta)
 
     def __eq__(self, other):

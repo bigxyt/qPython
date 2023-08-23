@@ -34,7 +34,7 @@ class QWriterException(Exception):
 
 
 
-ENDIANESS = '\1' if sys.byteorder == 'little' else '\0'
+ENDIANNESS = '\1' if sys.byteorder == 'little' else '\0'
 
 
 class QWriter(object):
@@ -81,7 +81,7 @@ class QWriter(object):
         self._options = MetaData(**CONVERSION_OPTIONS.union_dict(**options))
 
         # header and placeholder for message size
-        self._buffer.write(('%s%s\0\0\0\0\0\0' % (ENDIANESS, chr(msg_type))).encode(self._encoding))
+        self._buffer.write(('%s%s\0\0\0\0\0\0' % (ENDIANNESS, chr(msg_type))).encode(self._encoding))
 
         self._write(data)
 
@@ -145,7 +145,10 @@ class QWriter(object):
         try:
             self._buffer.write(struct.pack('b', qtype))
             fmt = STRUCT_MAP[qtype]
-            self._buffer.write(struct.pack(fmt, data))
+            if type(data) == numpy.bool_:
+                self._buffer.write(struct.pack(fmt, int(data)))
+            else:
+                self._buffer.write(struct.pack(fmt, data))
         except KeyError:
             raise QWriterException('Unable to serialize type: %s' % data.__class__ if isinstance(data, object) else type(data))
 
@@ -258,7 +261,7 @@ class QWriter(object):
         if qtype == QGENERAL_LIST:
             self._write_generic_list(data)
         elif qtype == QCHAR:
-            self._write_string(data.tostring())
+            self._write_string(data.tobytes())
         else:
             self._buffer.write(struct.pack('=bxi', -qtype, len(data)))
             if data.dtype.type in (numpy.datetime64, numpy.timedelta64):
@@ -277,5 +280,5 @@ class QWriter(object):
                 for guid in data:
                     self._buffer.write(guid.bytes)
             else:
-                self._buffer.write(data.tostring())
+                self._buffer.write(data.tobytes())
 
