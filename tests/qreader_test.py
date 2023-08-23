@@ -92,7 +92,7 @@ EXPRESSIONS = OrderedDict((
                     (b'0Ng',                                           qnull(QGUID)),
                     (b'()',                                            []),
                     (b'(0b;1b;0b)',                                    qlist(numpy.array([False, True, False], dtype=numpy.bool_), qtype=QBOOL_LIST)),
-                    (b'(0x01;0x02;0xff)',                              qlist(numpy.array([0x01, 0x02, 0xff], dtype=numpy.byte), qtype=QBYTE_LIST)),
+                    (b'(0x01;0x02;0xff)',                              qlist(numpy.array([0x01, 0x02, 0xff]).astype(numpy.byte), qtype=QBYTE_LIST)),
                     (b'(1h;2h;3h)',                                    qlist(numpy.array([1, 2, 3], dtype=numpy.int16), qtype=QSHORT_LIST)),
                     (b'(1h;0Nh;3h)',                                   qlist(numpy.array([1, qnull(QSHORT), 3], dtype=numpy.int16), qtype=QSHORT_LIST)),
                     (b'1 2 3',                                         qlist(numpy.array([1, 2, 3], dtype=numpy.int64), qtype=QLONG_LIST)),
