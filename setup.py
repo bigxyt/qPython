@@ -15,6 +15,8 @@
 #
 
 import os
+import sys
+
 from distutils.core import setup
 
 from qpython import __version__
@@ -42,6 +44,11 @@ else:
 # Utility function to read the README file.
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
+if len(sys.argv) > 0 and sys.argv[len(sys.argv) - 1].startswith('version='):
+    __version__ = sys.argv[len(sys.argv) - 1][8:] # NOQA
+    del (sys.argv[len(sys.argv) - 1])
 
 
 setup(name='qPython',
