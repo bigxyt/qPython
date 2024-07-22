@@ -99,7 +99,7 @@ class PandasQReader(QReader):
             odict = OrderedDict()
             meta = MetaData(qtype = QTABLE)
             for i in range(len(columns)):
-                column_name = columns[i] if isinstance(columns[i], str) else columns[i].decode("utf-8")
+                column_name = columns[i] if isinstance(columns[i], str) else columns[i].decode('utf-8')
                 if isinstance(data[i], str):
                     # convert character list (represented as string) to numpy representation
                     meta[column_name] = QSTRING
@@ -119,7 +119,6 @@ class PandasQReader(QReader):
                     odict[column_name] = data[i]
 
             df = pandas.DataFrame(odict)
-            df._metadata = ["meta"]
             df.attrs['meta'] = meta
             return df
         else:
@@ -199,7 +198,7 @@ class PandasQWriter(QWriter):
         if qtype == QGENERAL_LIST:
             self._write_generic_list(data.values)
         elif qtype == QCHAR:
-            self._write_string(data.replace(numpy.nan, ' ').values.astype(numpy.string_).tobytes())
+            self._write_string(data.replace(numpy.nan, ' ').values.astype(numpy.bytes_).tobytes())
         elif data.dtype.type not in (numpy.datetime64, numpy.timedelta64):
             data = data.fillna(QNULLMAP[-abs(qtype)][1])
             data = data.values
