@@ -202,7 +202,7 @@ class QReader(object):
             compressed_data = self._read_bytes(message_size - 12) if self._stream else self._buffer.raw(message_size - 12)
 
             raw_data = numpy.frombuffer(compressed_data, dtype = numpy.uint8)
-            if  uncompressed_size <= 0:
+            if uncompressed_size <= 0:
                 raise QReaderException('Error while data decompression.')
 
             raw_data = uncompress(raw_data, numpy.intc(uncompressed_size))

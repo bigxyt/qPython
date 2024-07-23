@@ -15,34 +15,35 @@
 
 import numpy
 
+DTYPE = numpy.intc
+DTYPE8 = numpy.uint8
 
-
-def uncompress(data, uncompressed_size):
-    _0 = numpy.intc(0)
-    _1 = numpy.intc(1)
-    _2 = numpy.intc(2)
-    _128 = numpy.intc(128)
-    _255 = numpy.intc(255)
+def uncompress(compressed, uncompressed_size):
+    _0 = DTYPE(0)
+    _1 = DTYPE(1)
+    _2 = DTYPE(2)
+    _128 = DTYPE(128)
+    _255 = DTYPE(255)
 
     n, r, s, p = _0, _0, _0, _0
     i, d = _1, _1
-    f = _255 & data[_0]
+    f = _255 & compressed[_0]
 
-    ptrs = numpy.zeros(256, dtype = numpy.intc)
-    uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
-    idx = numpy.arange(uncompressed_size, dtype = numpy.intc)
+    buffer = numpy.zeros(256, dtype = DTYPE)
+    uncompressed = numpy.zeros(uncompressed_size, dtype = DTYPE8)
+    idx = numpy.arange(uncompressed_size, dtype = DTYPE)
 
     while s < uncompressed_size:
         pp = p + _1
 
         if f & i:
-            r = ptrs[data[d]]
-            n = _2 + data[d + _1]
+            r = buffer[compressed[d]]
+            n = _2 + compressed[d + _1]
             uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
 
-            ptrs[(uncompressed[p]) ^ (uncompressed[pp])] = p
+            buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
             if s == pp:
-                ptrs[(uncompressed[pp]) ^ (uncompressed[pp + _1])] = pp
+                buffer[(uncompressed[pp]) ^ (uncompressed[pp + _1])] = pp
 
             d += _2
             r += _2
@@ -50,10 +51,10 @@ def uncompress(data, uncompressed_size):
             p = s
 
         else:
-            uncompressed[s] = data[d]
+            uncompressed[s] = compressed[d]
 
             if pp == s:
-                ptrs[(uncompressed[p]) ^ (uncompressed[pp])] = p
+                buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
                 p = pp
 
             s += _1
@@ -61,7 +62,7 @@ def uncompress(data, uncompressed_size):
 
         if i == _128:
             if s < uncompressed_size:
-                f = _255 & data[d]
+                f = _255 & compressed[d]
                 d += _1
                 i = _1
         else:

@@ -26,30 +26,30 @@ ctypedef numpy.uint8_t DTYPE8_t
 
 
 
-def uncompress(const DTYPE8_t[:] data, DTYPE_t uncompressed_size):
+def uncompress(const DTYPE8_t[:] compressed, DTYPE_t uncompressed_size):
     cdef DTYPE_t n, r, i, d, s, p, pp, f, j
     n, r, s, p, pp = 0, 0, 0, 0, 0
     i, d = 1, 1
 
-    cdef DTYPE_t[::1] ptrs = numpy.zeros(256, dtype = DTYPE)
+    cdef DTYPE_t[::1] buffer = numpy.zeros(256, dtype = DTYPE)
     cdef DTYPE8_t[::1] uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
     cdef const DTYPE_t[:] idx = numpy.arange(uncompressed_size, dtype = DTYPE)
 
-    f = 0xff & data[0]
+    f = 0xff & compressed[0]
 
     while s < uncompressed_size:
         pp = p + 1
 
         if f & i:
-            r = ptrs[data[d]]
-            n = 2 + data[d + 1]
+            r = buffer[compressed[d]]
+            n = 2 + compressed[d + 1]
             #uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
             for j in range(n):
                 uncompressed[idx[s + j]] = uncompressed[r+j]
 
-            ptrs[uncompressed[p] ^ uncompressed[pp]] = p
+            buffer[uncompressed[p] ^ uncompressed[pp]] = p
             if s == pp:
-                ptrs[uncompressed[pp] ^ uncompressed[pp + 1]] = pp
+                buffer[uncompressed[pp] ^ uncompressed[pp + 1]] = pp
 
             d += 2
             r += 2
@@ -57,10 +57,10 @@ def uncompress(const DTYPE8_t[:] data, DTYPE_t uncompressed_size):
             p = s
 
         else:
-            uncompressed[s] = data[d]
+            uncompressed[s] = compressed[d]
 
             if pp == s:
-                ptrs[uncompressed[p] ^ uncompressed[pp]] = p
+                buffer[uncompressed[p] ^ uncompressed[pp]] = p
                 p = pp
 
             s += 1
@@ -68,7 +68,7 @@ def uncompress(const DTYPE8_t[:] data, DTYPE_t uncompressed_size):
 
         if i == 128:
             if s < uncompressed_size:
-                f = 0xff & data[d]
+                f = 0xff & compressed[d]
                 d += 1
                 i = 1
         else:
