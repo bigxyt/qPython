@@ -16,59 +16,60 @@
 
 #cython: language_level=3
 
+
 import numpy
 cimport numpy
 
 DTYPE = numpy.int
-ctypedef numpy.int_t DTYPE_t
+ctypedef numpy.uint8_t DTYPE_t
 DTYPE8 = numpy.int
 ctypedef numpy.uint8_t DTYPE8_t
 
 
 
 def uncompress(const DTYPE8_t[:] compressed, DTYPE_t uncompressed_size):
-    cdef DTYPE_t n, r, i, d, s, p, pp, f, j
+    cdef DTYPE_t n, r, i, d, s, p, pp, f, m
     n, r, s, p, pp = 0, 0, 0, 0, 0
-    i, d = 1, 1
+    i, d = 0, 1
 
     cdef DTYPE_t[::1] buffer = numpy.zeros(256, dtype = DTYPE)
     cdef DTYPE8_t[::1] uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
-    cdef const DTYPE_t[:] idx = numpy.arange(uncompressed_size, dtype = DTYPE)
 
-    f = 0xff & compressed[0]
+    f = compressed[0]
 
     while s < uncompressed_size:
         pp = p + 1
 
         if f & i:
             r = buffer[compressed[d]]
-            n = 2 + compressed[d + 1]
-            #uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
-            for j in range(n):
-                uncompressed[idx[s + j]] = uncompressed[r+j]
+            uncompressed[s] = uncompressed[r]
+            uncompressed[s + 1] = uncompressed[r + 1]
 
-            buffer[uncompressed[p] ^ uncompressed[pp]] = p
-            if s == pp:
-                buffer[uncompressed[pp] ^ uncompressed[pp + 1]] = pp
+            n = compressed[d + 1]
 
             d += 2
             r += 2
-            s = s + n
-            p = s
+            s += 2
 
+            for m in range(n):
+                uncompressed[s + m] = uncompressed[r + m]
         else:
             uncompressed[s] = compressed[d]
-
-            if pp == s:
-                buffer[uncompressed[p] ^ uncompressed[pp]] = p
-                p = pp
-
             s += 1
             d += 1
 
+        while pp < s:
+            buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
+            p = pp
+            pp += 1
+
+        if f & i:
+            s += n
+            p = s
+
         if i == 128:
             if s < uncompressed_size:
-                f = 0xff & compressed[d]
+                f = compressed[d]
                 d += 1
                 i = 1
         else:

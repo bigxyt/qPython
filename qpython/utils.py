@@ -22,49 +22,50 @@ def uncompress(compressed, uncompressed_size):
     _0 = DTYPE(0)
     _1 = DTYPE(1)
     _2 = DTYPE(2)
-    _128 = DTYPE(128)
-    _255 = DTYPE(255)
 
     n, r, s, p = _0, _0, _0, _0
     i, d = _1, _1
-    f = _255 & compressed[_0]
 
-    buffer = numpy.zeros(256, dtype = DTYPE)
     uncompressed = numpy.zeros(uncompressed_size, dtype = DTYPE8)
-    idx = numpy.arange(uncompressed_size, dtype = DTYPE)
+    buffer = numpy.zeros(256, dtype = DTYPE)
+
+    f = compressed[0]
 
     while s < uncompressed_size:
-        pp = p + _1
+        pp = p + 1
 
         if f & i:
             r = buffer[compressed[d]]
-            n = _2 + compressed[d + _1]
-            uncompressed[idx[s:s + n]] = uncompressed[r:r + n]
+            uncompressed[s] = uncompressed[r]
+            uncompressed[s + 1] = uncompressed[r + 1]
 
-            buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
-            if s == pp:
-                buffer[(uncompressed[pp]) ^ (uncompressed[pp + _1])] = pp
+            n = compressed[d + 1]
 
-            d += _2
-            r += _2
-            s = s + n
-            p = s
+            d += 2
+            r += 2
+            s += 2
 
+            for m in range(n):
+                uncompressed[s + m] = uncompressed[r + m]
         else:
             uncompressed[s] = compressed[d]
+            s += 1
+            d += 1
 
-            if pp == s:
-                buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
-                p = pp
+        while pp < s:
+            buffer[(uncompressed[p]) ^ (uncompressed[pp])] = p
+            p = pp
+            pp += 1
 
-            s += _1
-            d += _1
+        if f & i:
+            s += n
+            p = s
 
-        if i == _128:
+        if i == 128:
             if s < uncompressed_size:
-                f = _255 & compressed[d]
-                d += _1
-                i = _1
+                f = compressed[d]
+                d += 1
+                i = 1
         else:
             i += i
 
