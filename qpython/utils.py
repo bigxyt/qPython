@@ -26,8 +26,8 @@ def uncompress(compressed, uncompressed_size):
     n, r, s, p = _0, _0, _0, _0
     i, d = _1, _1
 
-    uncompressed = numpy.zeros(uncompressed_size, dtype = DTYPE8)
     buffer = numpy.zeros(256, dtype = DTYPE)
+    uncompressed = numpy.zeros(uncompressed_size, dtype = DTYPE8)
 
     f = compressed[0]
 

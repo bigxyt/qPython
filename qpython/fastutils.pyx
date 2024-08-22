@@ -18,22 +18,28 @@
 
 
 import numpy
-cimport numpy
+cimport numpy as cnp
 
-DTYPE = numpy.int
-ctypedef numpy.uint8_t DTYPE_t
-DTYPE8 = numpy.int
-ctypedef numpy.uint8_t DTYPE8_t
+cnp.import_array()
+
+DTYPE = numpy.intc
+ctypedef cnp.int32_t DTYPE_t
+DTYPE8 = numpy.uint8
+ctypedef cnp.uint8_t DTYPE8_t
 
 
 
 def uncompress(const DTYPE8_t[:] compressed, DTYPE_t uncompressed_size):
+    _0 = DTYPE(0)
+    _1 = DTYPE(1)
+    _2 = DTYPE(2)
+
     cdef DTYPE_t n, r, i, d, s, p, pp, f, m
-    n, r, s, p, pp = 0, 0, 0, 0, 0
-    i, d = 0, 1
+    n, r, s, p, pp = _0, _0, _0, _0, _0
+    i, d = _1, _1
 
     cdef DTYPE_t[::1] buffer = numpy.zeros(256, dtype = DTYPE)
-    cdef DTYPE8_t[::1] uncompressed = numpy.zeros(uncompressed_size, dtype = numpy.uint8)
+    cdef DTYPE8_t[::1] uncompressed = numpy.zeros(uncompressed_size, dtype = DTYPE8)
 
     f = compressed[0]
 
