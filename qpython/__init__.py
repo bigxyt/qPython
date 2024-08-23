@@ -17,7 +17,7 @@
 __all__ = ['qconnection', 'qtype', 'qtemporal', 'qcollection']
 
 
-__version__ = '3.1.0'
+__version__ = '3.2.0'
 
 
 from copy import deepcopy
