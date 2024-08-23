@@ -1,9 +1,8 @@
 ------------------------------------------------------------------------------
-  qPython 3.2.0 [2024.08.23]
+  qPython 3.1.1 [2024.08.23]
 ------------------------------------------------------------------------------
- - Python 3.12 support
- - Fix for `fastutils.pyx` - where `uncompress()` was interpreted due to underlying Numpy exception
- - Python 3.12 compatibility was tested by running successful `tox` command in local development environment
+ - Compatibility with Python 3.12
+ - Fix: cythonized version of decompression
 
 ------------------------------------------------------------------------------
   qPython 3.1.0 [2024.07.23]
