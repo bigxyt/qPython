@@ -4,4 +4,4 @@ pandas>=1.2
 numpy>=1.14
 pytest>=2.5.0
 twisted>=13.2.0
-setuptools==73.0.1
+setuptools
