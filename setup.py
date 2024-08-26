@@ -17,7 +17,7 @@
 import os
 import sys
 
-from distutils.core import setup
+from setuptools import setup
 
 from qpython import __version__
 
